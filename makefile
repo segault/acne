@@ -3,6 +3,7 @@
 
 CXX := g++
 CXXFLAGS := -std=c++20 -Wall -Wextra -g
+LDFLAGS := -framework AudioToolbox -framework CoreFoundation
 MAIN := testing/acne
 
 VPATH := src:src/*.cpp
@@ -17,7 +18,7 @@ all: $(MAIN)
 	@echo \`$(MAIN)\' compiled
 
 $(MAIN): $(OBJS)
-	$(CXX) $(CXXFLAGS) $(OBJS) -o $(MAIN)
+	$(CXX) $(CXXFLAGS) $(OBJS) -o $(MAIN) $(LDFLAGS)
 
 $(OBJ_DIR)/%.o : %.cpp
 	@mkdir -p $(OBJ_DIR)

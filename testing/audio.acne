@@ -1,8 +1,5 @@
 set ac
-in = 5
+in = 12
 
-cir rc {
-    out = res(1000, in) + cap(0.000001, gnd);
-}
 
-out = rc(in);
+out = in;
