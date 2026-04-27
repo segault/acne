@@ -5,6 +5,7 @@
 #include "lexer.h"
 #include "lower.h"
 #include "parser.h"
+#include "render.h"
 #include "simulate.h"
 
 #include <algorithm>
@@ -38,6 +39,7 @@ ultimate:
 int main(int argc, char *argv[]) {
     try {
         bool dump_requested = false;
+        bool view_requested = false;
         const char *wav_path = nullptr;
         const char *input_path = nullptr;
 
@@ -45,6 +47,10 @@ int main(int argc, char *argv[]) {
             const std::string arg = argv[i];
             if (arg == "--dump-graph") {
                 dump_requested = true;
+                continue;
+            }
+            if (arg == "--view") {
+                view_requested = true;
                 continue;
             }
             if (arg == "--wav") {
@@ -63,7 +69,7 @@ int main(int argc, char *argv[]) {
 
         if (input_path == nullptr) {
             std::cerr << "usage: " << argv[0]
-                      << " [--dump-graph] [--wav output.wav] <file.acne>\n";
+                      << " [--dump-graph] [--view] [--wav output.wav] <file.acne>\n";
             return 1;
         }
 
@@ -82,6 +88,10 @@ int main(int argc, char *argv[]) {
 
         if (dump_requested) {
             dump_graph(std::cerr, graph);
+        }
+        if (view_requested) {
+            show_graph_view(graph);
+            return 0;
         }
 
         SimulationOptions options;

@@ -1,0 +1,9 @@
+set ac
+in = 5
+
+cir lpf {
+    gnd = cap(47000, in) + res(50, res(50, in));
+    out = res(100, in);
+}
+
+out = lpf(in);
