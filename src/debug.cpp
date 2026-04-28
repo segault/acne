@@ -16,6 +16,14 @@ const char *component_kind_name(ComponentKind kind) {
             return "inductor";
         case ComponentKind::VoltageSource:
             return "voltage_source";
+        case ComponentKind::InputSource:
+            return "input_source";
+        case ComponentKind::Diode:
+            return "diode";
+        case ComponentKind::NpnTransistor:
+            return "npn_transistor";
+        case ComponentKind::PnpTransistor:
+            return "pnp_transistor";
     }
     return "unknown";
 }

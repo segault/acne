@@ -29,7 +29,7 @@ public:
             graph_.source.amplitude = program_.input_value;
         }
 
-        add_component(ComponentKind::VoltageSource, graph_.input, graph_.ground,
+        add_component(ComponentKind::InputSource, graph_.input, graph_.ground,
                       graph_.source.amplitude, "vin");
     }
 
@@ -68,9 +68,9 @@ private:
     }
 
     ComponentId add_component(ComponentKind kind, NodeId a, NodeId b, double value,
-                              const std::string &name) {
+                              const std::string &name, NodeId c = 0, double value2 = 0.0) {
         const ComponentId id = static_cast<ComponentId>(graph_.components.size());
-        graph_.components.push_back({id, kind, a, b, value, 0.0, 0.0, name});
+        graph_.components.push_back({id, kind, a, b, c, value, value2, 0.0, 0.0, name});
         return id;
     }
 
@@ -105,7 +105,9 @@ private:
             throw std::runtime_error("Unsupported expression in lowering");
         }
 
-        if (expr.text == "res" || expr.text == "cap" || expr.text == "ind") {
+        if (expr.text == "res" || expr.text == "cap" || expr.text == "ind" ||
+            expr.text == "vsrc" || expr.text == "dio" || expr.text == "npn" ||
+            expr.text == "pnp") {
             lower_component_chain(start, expr, ctx);
             return;
         }
@@ -114,6 +116,28 @@ private:
     }
 
     void lower_component_chain(NodeId start, const Expr &expr, const LowerContext &ctx) {
+        if (expr.text == "dio") {
+            if (expr.args.size() != 1 || expr.args[0].kind != ExprKind::Identifier) {
+                throw std::runtime_error("Diode call 'dio' expects one node identifier argument");
+            }
+            const NodeId end = resolve_identifier(expr.args[0].text, ctx);
+            add_component(ComponentKind::Diode, start, end, 0.0, "dio");
+            return;
+        }
+        if (expr.text == "npn" || expr.text == "pnp") {
+            if (expr.args.size() != 3 || expr.args[0].kind != ExprKind::Number ||
+                expr.args[1].kind != ExprKind::Identifier ||
+                expr.args[2].kind != ExprKind::Identifier) {
+                throw std::runtime_error("Transistor call expects (beta, base, emitter)");
+            }
+            const ComponentKind kind =
+                expr.text == "npn" ? ComponentKind::NpnTransistor : ComponentKind::PnpTransistor;
+            const NodeId base = resolve_identifier(expr.args[1].text, ctx);
+            const NodeId emitter = resolve_identifier(expr.args[2].text, ctx);
+            add_component(kind, start, base, expr.args[0].number_value, expr.text, emitter);
+            return;
+        }
+
         if (expr.args.size() != 2) {
             throw std::runtime_error("Component call '" + expr.text + "' expects 2 arguments");
         }
@@ -128,6 +152,8 @@ private:
             kind = ComponentKind::Capacitor;
         } else if (expr.text == "ind") {
             kind = ComponentKind::Inductor;
+        } else if (expr.text == "vsrc") {
+            kind = ComponentKind::VoltageSource;
         }
 
         NodeId end = 0;

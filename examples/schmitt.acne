@@ -1,0 +1,19 @@
+set ac
+in = 5
+
+# Inverted Schmitt trigger sketch.
+# One AC input source plus one DC supply rail.
+
+vcc = vsrc(5, gnd);
+
+# Input / feedback network for first transistor base.
+b1 = res(33000, in) + res(220000, out) + res(68000, vcc);
+
+# First gain stage.
+c1 = res(4700, vcc) + npn(120, b1, gnd);
+
+# Second stage base drive with a diode clamp.
+b2 = res(10000, c1) + dio(gnd);
+
+# Output stage. Inverted output at collector.
+out = res(4700, vcc) + npn(120, b2, gnd);

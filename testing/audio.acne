@@ -1,5 +1,5 @@
 set ac
-in = 12
+in = 8
 
 
 out = in;

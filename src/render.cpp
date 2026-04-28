@@ -134,6 +134,14 @@ std::vector<std::string> horizontal_pattern(ComponentKind kind) {
             return {"~", "~", "~", "~"};
         case ComponentKind::VoltageSource:
             return {"(", "V", ")"};
+        case ComponentKind::InputSource:
+            return {"(", "I", "N", ")"};
+        case ComponentKind::Diode:
+            return {">", "|"};
+        case ComponentKind::NpnTransistor:
+            return {"N", "P", "N"};
+        case ComponentKind::PnpTransistor:
+            return {"P", "N", "P"};
     }
     return {"?"};
 }
@@ -148,6 +156,14 @@ std::vector<std::string> vertical_pattern(ComponentKind kind) {
             return {"~", "~", "~", "~"};
         case ComponentKind::VoltageSource:
             return {"O"};
+        case ComponentKind::InputSource:
+            return {"O"};
+        case ComponentKind::Diode:
+            return {">", "|"};
+        case ComponentKind::NpnTransistor:
+            return {"N", "P", "N"};
+        case ComponentKind::PnpTransistor:
+            return {"P", "N", "P"};
     }
     return {"?"};
 }
@@ -162,6 +178,14 @@ std::string component_prefix(ComponentKind kind) {
             return "L";
         case ComponentKind::VoltageSource:
             return "V";
+        case ComponentKind::InputSource:
+            return "IN";
+        case ComponentKind::Diode:
+            return "D";
+        case ComponentKind::NpnTransistor:
+            return "Q";
+        case ComponentKind::PnpTransistor:
+            return "Q";
     }
     return "?";
 }

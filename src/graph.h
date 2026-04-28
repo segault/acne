@@ -14,6 +14,10 @@ enum class ComponentKind {
     Capacitor,
     Inductor,
     VoltageSource,
+    InputSource,
+    Diode,
+    NpnTransistor,
+    PnpTransistor,
 };
 
 struct Node {
@@ -27,7 +31,9 @@ struct Component {
     ComponentKind kind = ComponentKind::Resistor;
     NodeId a = 0;
     NodeId b = 0;
+    NodeId c = 0;
     double value = 0.0;
+    double value2 = 0.0;
     double state_voltage = 0.0;
     double state_current = 0.0;
     std::string name;
